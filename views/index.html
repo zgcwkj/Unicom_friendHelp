@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="icon" href="../static/favicon.ico" type="image/x-icon">
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/css/toastr.min.css" rel="stylesheet">
+    <link href="../static/css/style.css" rel="stylesheet">
+    <title>联通年终活动批量处理程序</title>
+</head>
+<body>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#autoCode" data-toggle="tab">自动刷取</a></li>
+                <li><a href="#setCode" data-toggle="tab" style="display:none">添加邀请码</a></li>
+                <li><a href="#getCode" data-toggle="tab" style="display:none">获取邀请码</a></li>
+            </ul>
+        </div>
+        <div class="panel-body">
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="autoCode">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">encryptMobile</label>
+                        <input type="email" class="form-control" id="encryptMobile">
+                        <small class="form-text text-muted">encryptMobile 是你的身份信息</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">invitationCode</label>
+                        <textarea class="form-control" placeholder="一行一个，会自动去重，请放心大胆的使用！" id="invitationCode" rows="10"></textarea>
+                        <small class="form-text text-muted">invitationCode 是别人的邀请码，一行一个</small>
+                    </div>
+                    <button type="button" class="btn btn-success" id="btn_submit">提交处理（单次处理）</button>
+                    <button type="button" class="btn btn-info" id="btn_autosubmit" disabled>提交处理（自动获取邀请码并处理，切记请不要关闭页面）</button>
+                </div>
+                <div class="tab-pane fade" id="setCode">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">invitationCode</label>
+                        <textarea class="form-control" placeholder="一行一个，会自动去重，请放心大胆的使用！" id="set_invitationCode" rows="10"></textarea>
+                        <small class="form-text text-muted">invitationCode 是别人的邀请码，一行一个</small>
+                    </div>
+                    <button type="button" class="btn btn-success" id="btn_setcode">提交邀请码</button>
+                </div>
+                <div class="tab-pane fade" id="getCode">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">invitationCode</label>
+                        <textarea class="form-control" placeholder="一行一个，会自动去重，请放心大胆的使用！" id="get_invitationCode" rows="10"></textarea>
+                        <small class="form-text text-muted">invitationCode 是别人的邀请码，一行一个</small>
+                    </div>
+                    <button type="button" class="btn btn-success" id="btn_getcode">获取邀请码</button>
+                    <button type="button" class="btn btn-info" id="btn_copycode" data-clipboard-target="#get_invitationCode">复制邀请码</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">功能栏</h3>
+        </div>
+        <div class="panel-body">
+            <a href="/Help" class="btn btn-warning" title="我猜，你可能需要帮助">帮助</a>
+            <a href="http://blog.zgcwkj.cn" target="_blank" class="btn btn-link">作者：zgcwkj</a>
+            <a href="http://github.com/zgcwkj/friendHelp" target="_blank" class="btn btn-link">源码：FriendHelp（）</a>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">同类作品</h3>
+        </div>
+        <div class="panel-body">
+            <a href="http://yoouu.cn:3000" target="_blank" class="btn btn-link">http://yoouu.cn:3000（作者：SunSeekerX）</a>
+            <a href="http://10010.us.huasteble.cn/" target="_blank" class="btn btn-link">http://10010.us.huasteble.cn（作者：韵の祈）</a>
+        </div>
+    </div>
+    <script src="../static/js/jquery-3.3.1.min.js"></script>
+    <script src="../static/js/bootstrap.min.js"></script>
+    <script src="../static/js/clipboard.min.js"></script>
+    <script src="../static/js/toastr.min.js"></script>
+    <script src="../static/js/script.js"></script>
+    <script>
+        //初始化复制插件（clipboard）
+        var clipboard = new ClipboardJS('#btn_copycode');
+        //按钮事件 提交处理（单次处理）
+        $("#btn_submit").click(function(){
+            var eMV = $("#encryptMobile").val();
+            var iCV =  $("#invitationCode").val().replace(/\r\n/g, "<br/>").replace(/\n/g, "<br/>").replace(/\s/g, " ").replace(" ", "");
+            if (eMV == "") { toastr.error("encryptMobile 数据没给我", "对方丑拒你，并嘲讽你"); return; }
+            if (iCV == "") { toastr.error("invitationCode 数据没给我", "对方丑拒你，并嘲讽你"); return; }
+            iCVS = iCV.split("<br/>");//分割成数组
+            iCVS = iCVS.sort();//数组排序
+            iCVS = deduplication(iCVS);//本地去重复
+            iCVS.forEach(iCVSV => {
+                $.post("/ApiOneData", {
+                    encryptMobile: eMV,
+                    invitationCode: iCVSV,
+                }, function (data) {
+                    if (data.indexOf("成功") != -1) {
+                        toastr.success(iCVSV + "结果>" + data, "成功");
+                        console.log("成功>" + iCVSV + "<结果>" + data);
+                    } else if (data.indexOf("已经") != -1) {
+                        toastr.warning(iCVSV + "结果>" + data, "已经帮过");
+                        console.log("已经帮过>" + iCVSV + "<结果>" + data);
+                    } else if (data.indexOf("不可以") != -1) {
+                        toastr.warning(iCVSV + "结果>" + data, "自交么");
+                        console.log("自交么>" + iCVSV + "<结果>" + data);
+                    } else {
+                        toastr.error(iCVSV + "结果>" + data, "失败");
+                        console.log("失败>" + iCVSV + "<结果>" + data);
+                    }
+                })
+            });
+            document.getElementById("invitationCode").value = "";
+        });
+        //按钮事件 提交处理（自动获取邀请码并处理，切记请不要关闭页面）
+        $("#btn_autosubmit").click(function(){
+            var eMV = $("#encryptMobile").val();
+            var iCV =  $("#invitationCode").val().replace(/\r\n/g, "<br/>").replace(/\n/g, "<br/>").replace(/\s/g, " ").replace(" ", "");
+            if (eMV == "") { toastr.error("encryptMobile 数据没给我", "对方丑拒你，并嘲讽你"); return; }
+            if (iCV == "") { toastr.error("invitationCode 数据没给我", "对方丑拒你，并嘲讽你"); return; }
+            iCVS = iCV.split("<br/>");//分割成数组
+            iCVS = iCVS.sort();//数组排序
+            iCVS = deduplication(iCVS);//本地去重复
+            iCVS.forEach(iCVSV => {
+                $.post("/ApiOneData", {
+                    encryptMobile: eMV,
+                    invitationCode: iCVSV,
+                }, function (data) {
+                    if (data.indexOf("成功") != -1) {
+                        toastr.success(iCVSV + "结果>" + data, "成功");
+                        console.log("成功>" + iCVSV + "<结果>" + data);
+                    } else if (data.indexOf("已经") != -1) {
+                        toastr.warning(iCVSV + "结果>" + data, "已经帮过");
+                        console.log("已经帮过>" + iCVSV + "<结果>" + data);
+                    } else if (data.indexOf("不可以") != -1) {
+                        toastr.warning(iCVSV + "结果>" + data, "自交么");
+                        console.log("自交么>" + iCVSV + "<结果>" + data);
+                    } else {
+                        toastr.error(iCVSV + "结果>" + data, "失败");
+                        console.log("失败>" + iCVSV + "<结果>" + data);
+                    }
+                })
+            });
+            $("#invitationCode").val("");
+        });
+        //按钮事件 提交邀请码
+        $("#btn_setcode").click(function () {
+            var iCV = $("#set_invitationCode").val().replace(/\r\n/g, "<br/>").replace(/\n/g, "<br/>").replace(/\s/g, " ").replace(" ", "");
+            if (iCV == "") { toastr.error("invitationCode 数据没给我", "对方丑拒你，并嘲讽你"); return; }
+            iCVS = iCV.split("<br/>");//分割成数组
+            iCVS = iCVS.sort();//数组排序
+            iCVS = deduplication(iCVS);//本地去重复
+            iCVS.forEach(iCVSV => {
+                $.post("/ApiSetCodeData", {
+                    invitationCodes: iCVSV,
+                }, function (data) {
+                    $("#set_invitationCode").val("");
+                });
+            });
+        });
+        //按钮事件 获取邀请码
+        $("#btn_getcode").click(function(){
+            $.post("/ApiGetCodeData", function (data) {
+                $("#get_invitationCode").val("dds\ns\n");
+                $("#get_invitationCode").val(data);
+            });
+        });
+    </script>
+</body>
+</html>

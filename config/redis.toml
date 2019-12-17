@@ -1,0 +1,8 @@
+# This is a Redis Config Files
+
+[redis]
+server = "127.0.0.1"
+port = "3306"
+database = "openmysql"
+name = "root"
+pass = "root"
