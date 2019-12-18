@@ -9,13 +9,13 @@ import (
 // ChinaUnicom_GetFriendHelp 联通年终活动接口方法
 func ChinaUnicom_GetFriendHelp(encryptMobile string, invitationCode string) []byte {
 	// url := "https://m.client.10010.com/DoubleCard_Pro/static/doubleCard/friendHelp?"
-	url := "https://m.client.10010.com/DoubleCard_Pro/static/doubleCard/actFriendHelp?"
+	url := "https://m.client.10010.com/DoubleCard_Pro/static/doubleCard/"
 	data := "encryptMobile=" + encryptMobile + "&invitationCode=" + invitationCode
 	client := &http.Client{}
-	reqest, err := http.NewRequest("POST", url+data, nil)
+	reqest, err := http.NewRequest("POST", url+"actFriendHelp?"+data, nil)
 	reqest.Header.Add("Cookie", "")
+	reqest.Header.Add("Referer", url+"activityIndexDu?"+data)
 	reqest.Header.Add("Origin", "https://m.client.10010.com")
-	reqest.Header.Add("Referer", "https://m.client.10010.com")
 	reqest.Header.Add("Access-Control-Allow-Credentials", "true")
 	reqest.Header.Add("Access-Control-Allow-Origin", "https://img.client.10010.com")
 	reqest.Header.Add("Accept", "application/json, text/plain, */*")

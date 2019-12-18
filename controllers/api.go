@@ -25,6 +25,12 @@ func ApiOneData(resp http.ResponseWriter, req *http.Request) {
 				//# 记录到数据库中
 				if strings.Contains(strBody, "成功") {
 					models.SetCodeFail(invitationCode, true)
+				} else if strings.Contains(strBody, "已经") {
+					models.SetCodeFail(invitationCode, true)
+				} else if strings.Contains(strBody, "不可以") {
+					models.SetCodeFail(invitationCode, true)
+				} else if strings.Contains(strBody, "\"1000\"") {
+					models.SetCodeFail(invitationCode, true)
 				} else {
 					models.SetCodeFail(invitationCode, false)
 				}
