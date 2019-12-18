@@ -3,7 +3,6 @@ package utils
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -37,6 +36,5 @@ func ChinaUnicom_GetFriendHelp(encryptMobile string, invitationCode string) []by
 		fmt.Println(err)
 	}
 
-	log.Println(string(body))
 	return body
 }

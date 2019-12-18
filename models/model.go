@@ -41,6 +41,7 @@ func init() {
 	db, err := sql.Open("mysql", dblink)
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
 	Db = db
 	// defer db.Close()

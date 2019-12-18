@@ -16,8 +16,8 @@
         <div class="panel-heading">
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#autoCode" data-toggle="tab">自动刷取</a></li>
-                <li><a href="#setCode" data-toggle="tab" style="display:none">添加邀请码</a></li>
-                <li><a href="#getCode" data-toggle="tab" style="display:none">获取邀请码</a></li>
+                <li><a href="#setCode" data-toggle="tab">添加邀请码</a></li>
+                <li><a href="#getCode" data-toggle="tab">获取邀请码</a></li>
             </ul>
         </div>
         <div class="panel-body">
@@ -34,7 +34,7 @@
                         <small class="form-text text-muted">invitationCode 是别人的邀请码，一行一个</small>
                     </div>
                     <button type="button" class="btn btn-success" id="btn_submit">提交处理（单次处理）</button>
-                    <button type="button" class="btn btn-info" id="btn_autosubmit" disabled>提交处理（自动获取邀请码并处理，切记请不要关闭页面）</button>
+                    <button type="button" class="btn btn-info" id="btn_autosubmit">提交处理（自动获取邀请码并处理，切记请不要关闭页面）</button>
                 </div>
                 <div class="tab-pane fade" id="setCode">
                     <div class="form-group">
@@ -63,7 +63,7 @@
         <div class="panel-body">
             <a href="/Help" class="btn btn-warning" title="我猜，你可能需要帮助">帮助</a>
             <a href="http://blog.zgcwkj.cn" target="_blank" class="btn btn-link">作者：zgcwkj</a>
-            <a href="http://github.com/zgcwkj/friendHelp" target="_blank" class="btn btn-link">源码：FriendHelp（）</a>
+            <a href="http://github.com/zgcwkj/friendHelp" target="_blank" class="btn btn-link">源码：FriendHelp</a>
         </div>
     </div>
     <div class="panel panel-default">
@@ -80,93 +80,5 @@
     <script src="../static/js/clipboard.min.js"></script>
     <script src="../static/js/toastr.min.js"></script>
     <script src="../static/js/script.js"></script>
-    <script>
-        //初始化复制插件（clipboard）
-        var clipboard = new ClipboardJS('#btn_copycode');
-        //按钮事件 提交处理（单次处理）
-        $("#btn_submit").click(function(){
-            var eMV = $("#encryptMobile").val();
-            var iCV =  $("#invitationCode").val().replace(/\r\n/g, "<br/>").replace(/\n/g, "<br/>").replace(/\s/g, " ").replace(" ", "");
-            if (eMV == "") { toastr.error("encryptMobile 数据没给我", "对方丑拒你，并嘲讽你"); return; }
-            if (iCV == "") { toastr.error("invitationCode 数据没给我", "对方丑拒你，并嘲讽你"); return; }
-            iCVS = iCV.split("<br/>");//分割成数组
-            iCVS = iCVS.sort();//数组排序
-            iCVS = deduplication(iCVS);//本地去重复
-            iCVS.forEach(iCVSV => {
-                $.post("/ApiOneData", {
-                    encryptMobile: eMV,
-                    invitationCode: iCVSV,
-                }, function (data) {
-                    if (data.indexOf("成功") != -1) {
-                        toastr.success(iCVSV + "结果>" + data, "成功");
-                        console.log("成功>" + iCVSV + "<结果>" + data);
-                    } else if (data.indexOf("已经") != -1) {
-                        toastr.warning(iCVSV + "结果>" + data, "已经帮过");
-                        console.log("已经帮过>" + iCVSV + "<结果>" + data);
-                    } else if (data.indexOf("不可以") != -1) {
-                        toastr.warning(iCVSV + "结果>" + data, "自交么");
-                        console.log("自交么>" + iCVSV + "<结果>" + data);
-                    } else {
-                        toastr.error(iCVSV + "结果>" + data, "失败");
-                        console.log("失败>" + iCVSV + "<结果>" + data);
-                    }
-                })
-            });
-            document.getElementById("invitationCode").value = "";
-        });
-        //按钮事件 提交处理（自动获取邀请码并处理，切记请不要关闭页面）
-        $("#btn_autosubmit").click(function(){
-            var eMV = $("#encryptMobile").val();
-            var iCV =  $("#invitationCode").val().replace(/\r\n/g, "<br/>").replace(/\n/g, "<br/>").replace(/\s/g, " ").replace(" ", "");
-            if (eMV == "") { toastr.error("encryptMobile 数据没给我", "对方丑拒你，并嘲讽你"); return; }
-            if (iCV == "") { toastr.error("invitationCode 数据没给我", "对方丑拒你，并嘲讽你"); return; }
-            iCVS = iCV.split("<br/>");//分割成数组
-            iCVS = iCVS.sort();//数组排序
-            iCVS = deduplication(iCVS);//本地去重复
-            iCVS.forEach(iCVSV => {
-                $.post("/ApiOneData", {
-                    encryptMobile: eMV,
-                    invitationCode: iCVSV,
-                }, function (data) {
-                    if (data.indexOf("成功") != -1) {
-                        toastr.success(iCVSV + "结果>" + data, "成功");
-                        console.log("成功>" + iCVSV + "<结果>" + data);
-                    } else if (data.indexOf("已经") != -1) {
-                        toastr.warning(iCVSV + "结果>" + data, "已经帮过");
-                        console.log("已经帮过>" + iCVSV + "<结果>" + data);
-                    } else if (data.indexOf("不可以") != -1) {
-                        toastr.warning(iCVSV + "结果>" + data, "自交么");
-                        console.log("自交么>" + iCVSV + "<结果>" + data);
-                    } else {
-                        toastr.error(iCVSV + "结果>" + data, "失败");
-                        console.log("失败>" + iCVSV + "<结果>" + data);
-                    }
-                })
-            });
-            $("#invitationCode").val("");
-        });
-        //按钮事件 提交邀请码
-        $("#btn_setcode").click(function () {
-            var iCV = $("#set_invitationCode").val().replace(/\r\n/g, "<br/>").replace(/\n/g, "<br/>").replace(/\s/g, " ").replace(" ", "");
-            if (iCV == "") { toastr.error("invitationCode 数据没给我", "对方丑拒你，并嘲讽你"); return; }
-            iCVS = iCV.split("<br/>");//分割成数组
-            iCVS = iCVS.sort();//数组排序
-            iCVS = deduplication(iCVS);//本地去重复
-            iCVS.forEach(iCVSV => {
-                $.post("/ApiSetCodeData", {
-                    invitationCodes: iCVSV,
-                }, function (data) {
-                    $("#set_invitationCode").val("");
-                });
-            });
-        });
-        //按钮事件 获取邀请码
-        $("#btn_getcode").click(function(){
-            $.post("/ApiGetCodeData", function (data) {
-                $("#get_invitationCode").val("dds\ns\n");
-                $("#get_invitationCode").val(data);
-            });
-        });
-    </script>
 </body>
 </html>

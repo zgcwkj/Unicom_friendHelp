@@ -2,7 +2,4 @@
 
 [redis]
 server = "127.0.0.1"
-port = "3306"
-database = "openmysql"
-name = "root"
-pass = "root"
+port = "6379"
