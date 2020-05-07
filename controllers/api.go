@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/zgcwkj/friendHelp/models"
-	"github.com/zgcwkj/friendHelp/redis"
-	"github.com/zgcwkj/friendHelp/utils"
+	"github.com/zgcwkj/Unicom_friendHelp/models"
+	"github.com/zgcwkj/Unicom_friendHelp/redis"
+	"github.com/zgcwkj/Unicom_friendHelp/utils"
 )
 
 // ApiOneData 单条数据接口
@@ -31,6 +31,7 @@ func ApiOneData(resp http.ResponseWriter, req *http.Request) {
 					models.SetCodeFail(invitationCode, true)
 				} else if strings.Contains(strBody, "\"1000\"") {
 					models.SetCodeFail(invitationCode, true)
+					resp.Write([]byte("打开手机营业厅应用，重新进入活动页面可以解决此问题"))
 				} else {
 					models.SetCodeFail(invitationCode, false)
 				}

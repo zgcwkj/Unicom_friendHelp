@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/zgcwkj/friendHelp/redis"
+	"github.com/zgcwkj/Unicom_friendHelp/redis"
 )
 
 // friendData 映射 friendData 表的结构数据

@@ -3,7 +3,7 @@ package routers
 import (
 	"net/http"
 
-	"github.com/zgcwkj/friendHelp/controllers"
+	"github.com/zgcwkj/Unicom_friendHelp/controllers"
 )
 
 // init 初始化路由

@@ -9,6 +9,7 @@ import (
 // ChinaUnicom_GetFriendHelp 联通年终活动接口方法
 func ChinaUnicom_GetFriendHelp(encryptMobile string, invitationCode string) []byte {
 	// url := "https://m.client.10010.com/DoubleCard_Pro/static/doubleCard/friendHelp?"
+	// https://m.client.10010.com/DoubleCard_Pro/static/doubleCard/activityIndexDu?encryptMobile=c99288d5f025f56709cc6c80c4df095f&invitationCode=
 	url := "https://m.client.10010.com/DoubleCard_Pro/static/doubleCard/"
 	data := "encryptMobile=" + encryptMobile + "&invitationCode=" + invitationCode
 	client := &http.Client{}

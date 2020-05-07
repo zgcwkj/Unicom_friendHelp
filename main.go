@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	_ "github.com/zgcwkj/friendHelp/routers"
+	_ "github.com/zgcwkj/Unicom_friendHelp/routers"
 )
 
 func main() {
