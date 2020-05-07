@@ -6,7 +6,7 @@
 
 > 首先下载源码：
 > 
-> go get github.com/zgcwkj/friendHelp
+> go get github.com/zgcwkj/Unicom_friendHelp
 > 
 > 然后修改配置文件：
 > 
